@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - '6500:5432'
+    restart: always
+    env_file:
+      - ./server/.env
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+  server:
+    build:
+      dockerfile: server/dockerfile
+      context: .
+    volumes:
+      - ./server:/user
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - postgres
+
+  client:
+    image: node:14.19.1
+    command: sh -c "npm install && npm run lint:fix && npm start"
+    ports:
+      - 3000:3000
+    working_dir: /client
+    environment:
+      - ./client/.env
+    volumes:
+      - ./client:/client
+    depends_on:
+      - server
+
+volumes:
+  postgres-db:
