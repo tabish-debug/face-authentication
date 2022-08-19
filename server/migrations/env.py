@@ -5,12 +5,16 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import time
+
 from app.config import settings
 from app.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+time.sleep(5)
 
 config.set_main_option(
     "sqlalchemy.url", f"postgresql+psycopg2://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOSTNAME}:{settings.DATABASE_PORT}/{settings.POSTGRES_DB}")

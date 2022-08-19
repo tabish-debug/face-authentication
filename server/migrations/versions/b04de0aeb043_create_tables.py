@@ -1,8 +1,8 @@
-"""create-first-time
+"""'create tables'
 
-Revision ID: 771516599c8e
+Revision ID: b04de0aeb043
 Revises: 
-Create Date: 2022-08-19 11:06:39.501303
+Create Date: 2022-08-19 17:02:35.472299
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '771516599c8e'
+revision = 'b04de0aeb043'
 down_revision = None
 branch_labels = None
 depends_on = None

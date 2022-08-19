@@ -1,20 +1,20 @@
 version: '3.9'
 services:
-  postgres:
-    image: postgres
-    container_name: postgres
+  db:
+    image: postgres:latest
     ports:
-      - '6500:5432'
+      - '5432:5432'
     restart: always
     env_file:
       - ./server/.env
     volumes:
-      - postgres-db:/var/lib/postgresql/data
+      - ./db/data:/var/lib/postgresql/data
 
   server:
     build:
       dockerfile: server/dockerfile
       context: .
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
       - ./server:/user
     ports:
@@ -22,7 +22,7 @@ services:
     env_file:
       - ./server/.env
     depends_on:
-      - postgres
+      - db
 
   client:
     image: node:14.19.1
@@ -36,6 +36,3 @@ services:
       - ./client:/client
     depends_on:
       - server
-
-volumes:
-  postgres-db:
