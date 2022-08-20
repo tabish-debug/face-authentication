@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Service } from '../services/service';
 import Webcam from 'react-webcam';
 import { User } from '../interfaces/interface';
+import { Link, useNavigate } from 'react-router-dom';
 
 const videoConstraints = {
   facingMode: 'user'
@@ -15,6 +16,8 @@ function Register() {
   const [imgSrc, setImgSrc] = useState(null);
   const [captureImage, setCaptureImage] = useState<File>();
   const [uploadImage, setUploadImage] = useState<File>();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setEmailValid(/\S+@\S+\.\S+/.test(email));
@@ -79,11 +82,16 @@ function Register() {
     const service = new Service();
     const user: User = await service.registerUser({ email });
     const uploadFile: any = uploadImage || captureImage;
-    const file = await service.uploadUserImage(uploadFile, user.id);
+    const response: any = await service.uploadUserImage(uploadFile, user.id);
     setEmail('');
     setCaptureImage(undefined);
     setUploadImage(undefined);
-    console.log(file);
+    if (response?.status === 201) {
+      navigate('/login');
+    }
+    if (response?.status !== 201) {
+      alert('Registration Failed');
+    }
   }
 
   return (
@@ -117,14 +125,18 @@ function Register() {
           <label className="btn btn-primary" htmlFor="img">
             upload image
           </label>
-          <button className="btn btn-primary" onClick={() => setClickCapture(!clickCapture)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              setClickCapture(!clickCapture);
+            }}>
             {clickCapture ? 'Close Camera' : 'Open Camera'}
           </button>
         </div>
         <div className="d-flex justify-content-center">
           <img
             id="selectedImage"
-            width={200}
+            width="100%"
             style={{ display: clickCapture ? 'none' : 'block' }}
           />
         </div>
@@ -139,7 +151,9 @@ function Register() {
           Submit
         </button>
       </div>
-      <div>I have already register with face</div>
+      <div>
+        I already have register? <Link to="/login">Login</Link>
+      </div>
     </div>
   );
 }

@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Service } from '../services/service';
 import Webcam from 'react-webcam';
-import { User } from '../interfaces/interface';
+import { Link } from 'react-router-dom';
 
 const videoConstraints = {
   facingMode: 'user'
 };
 
-function Login() {
+function Login(props: any) {
   const [email, setEmail] = useState('');
   const [emailValid, setEmailValid] = useState(false);
   const [fileExist, setFileExist] = useState(false);
-  const [clickCapture, setClickCapture] = useState(false);
+  const [clickCapture, setClickCapture] = useState(true);
   const [imgSrc, setImgSrc] = useState(null);
   const [captureImage, setCaptureImage] = useState<File>();
-  const [uploadImage, setUploadImage] = useState<File>();
 
   useEffect(() => {
     setEmailValid(/\S+@\S+\.\S+/.test(email));
   }, [email]);
 
   useEffect(() => {
-    setFileExist(Boolean(captureImage || uploadImage));
-  }, [captureImage, uploadImage]);
+    setFileExist(Boolean(captureImage));
+  }, [captureImage]);
 
   useEffect(() => {
     if (imgSrc) {
@@ -44,7 +43,6 @@ function Login() {
       setImgSrc(imageSrc);
       setClickCapture(false);
       setCaptureImage(await urlToFile(imageSrc, 'data.jpeg', 'image/jpeg'));
-      setUploadImage(undefined);
     }, [webcamRef]);
     return (
       <>
@@ -62,27 +60,16 @@ function Login() {
     );
   };
 
-  async function uploadImageProcess(event: any) {
-    const selectedFile = event?.target?.files[0];
-    setCaptureImage(undefined);
-    setUploadImage(selectedFile);
-    const reader = new FileReader();
-    const imgtag: any = document.getElementById('selectedImage');
-    imgtag.title = selectedFile.name;
-    reader.onload = function (event) {
-      imgtag.src = event?.target?.result;
-    };
-    reader.readAsDataURL(selectedFile);
-  }
-
   async function submit() {
     const service = new Service();
-    const uploadFile: any = uploadImage || captureImage;
-    const user = await service.loginWithImage(uploadFile, email);
+    const uploadFile: any = captureImage;
+    const response: any = await service.loginWithImage(uploadFile, email);
     setEmail('');
     setCaptureImage(undefined);
-    setUploadImage(undefined);
-    console.log(user);
+    props.setLogging(response?.data?.status === 'success');
+    if (!(response?.data?.status === 'success')) {
+      alert('Login Failed');
+    }
   }
 
   return (
@@ -105,30 +92,22 @@ function Login() {
       </div>
       <div className="mb-3">
         <label className="mb-3">Facial Authentication</label>
-        <div className="p-3 mb-3 d-flex justify-content-around">
-          <input
-            type="file"
-            name="uploadfile"
-            id="img"
-            style={{ display: 'none' }}
-            onChange={(e) => uploadImageProcess(e)}
-          />
-          <label className="btn btn-primary" htmlFor="img">
-            upload image
-          </label>
-          <button className="btn btn-primary" onClick={() => setClickCapture(!clickCapture)}>
-            {clickCapture ? 'Close Camera' : 'Open Camera'}
-          </button>
-        </div>
         <div className="d-flex justify-content-center">
           <img
             id="selectedImage"
-            width={200}
+            width="100%"
             style={{ display: clickCapture ? 'none' : 'block' }}
           />
         </div>
         {clickCapture && <WebcamCapture />}
       </div>
+      {!clickCapture && (
+        <div className="d-flex justify-content-start">
+          <button type="submit" className="btn btn-primary" onClick={() => setClickCapture(true)}>
+            Re-Take
+          </button>
+        </div>
+      )}
       <div className="d-flex justify-content-end">
         <button
           disabled={!emailValid || !fileExist}
@@ -138,7 +117,9 @@ function Login() {
           Submit
         </button>
       </div>
-      <div>I have already register with face</div>
+      <div>
+        {"I didn't register here?"} <Link to="/register">Register</Link>
+      </div>
     </div>
   );
 }

@@ -42,4 +42,31 @@ export class Service {
       return err;
     }
   }
+
+  async getMe() {
+    try {
+      const response = await axios.get('api/users/me');
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async refreshAccessToken() {
+    try {
+      const response = await axios.get('api/auth/refresh');
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async logout() {
+    try {
+      const response = await axios.get('api/auth/logout');
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
 }
