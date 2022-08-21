@@ -25,7 +25,7 @@ JWT_PUBLIC_KEY=LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZ3d0RRWUpLb1pJaHZjTkFRRUJCU
 
 ### `client .env`
 
-REACT_APP_SERVER_URL=http://localhost:8000/\
+REACT_APP_SERVER_URL=http://localhost:8000/
 
 ### `docker-compose up -d`
 
