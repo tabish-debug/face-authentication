@@ -1,4 +1,4 @@
-# face-authentication
+# `face-authentication`
 
 Application backend build using python libraries face-recognition, fast-api and Database using postgresql.
 Apllication frontend build using react.js and bootstrap
