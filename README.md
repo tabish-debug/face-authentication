@@ -3,7 +3,7 @@
 Application backend build using python libraries face-recognition, fast-api and Database using postgresql.
 Apllication frontend build using react.js and bootstrap
 
-## Easy Run Application
+## `Easy Run Application`
 
 ### `server .env`
 
